@@ -19,6 +19,7 @@
 
     // edit-chest labels
     "label.location": "Location",
+    "label.value": "Total Value",
     "label.location.tile": "tile {{x}}, {{y}}",
     "label.name": "Name",
     "label.category": "Category",

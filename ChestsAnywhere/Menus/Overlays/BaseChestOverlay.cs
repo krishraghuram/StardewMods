@@ -235,6 +235,23 @@ internal abstract class BaseChestOverlay : BaseOverlay, IStorageOverlay
 
             // edit button
             this.EditButton.draw(batch, Color.White * navOpacity, 1f);
+
+            // total sell value
+            {
+                int totalSellPrice = this.Chest.Container.Inventory
+                    .Where(item => item != null)
+                    .Sum(item => Utility.getSellToStorePriceOfItem(item));
+                batch.DrawTextBlock(
+                    Game1.smallFont,
+                    totalSellPrice.ToString(),
+                    new Vector2(
+                        this.EditButton.bounds.X + this.EditButton.bounds.Width,
+                        this.ChestDropdown.bounds.Y
+                    ),
+                    bounds.Width,
+                    Color.White * navOpacity
+                );
+            }
         }
 
         // edit mode
@@ -242,6 +259,7 @@ internal abstract class BaseChestOverlay : BaseOverlay, IStorageOverlay
         {
             // get translations
             string locationLabel = I18n.Label_Location() + ":";
+            string valueLabel = I18n.Label_Value() + ":";
             string nameLabel = I18n.Label_Name() + ":";
             string categoryLabel = I18n.Label_Category() + ":";
             string orderLabel = I18n.Label_Order() + ":";
@@ -251,7 +269,7 @@ internal abstract class BaseChestOverlay : BaseOverlay, IStorageOverlay
             const int gutter = 10;
             int padding = Game1.pixelZoom * 10;
             float topOffset = padding;
-            int maxLabelWidth = (int)new[] { locationLabel, nameLabel, categoryLabel, orderLabel }.Select(p => font.MeasureString(p).X).Max();
+            int maxLabelWidth = (int)new[] { locationLabel, valueLabel, nameLabel, categoryLabel, orderLabel }.Select(p => font.MeasureString(p).X).Max();
 
             // background
             batch.DrawMenuBackground(new Rectangle(bounds.X, bounds.Y, bounds.Width, bounds.Height));
@@ -264,6 +282,16 @@ internal abstract class BaseChestOverlay : BaseOverlay, IStorageOverlay
 
                 Vector2 labelSize = batch.DrawTextBlock(font, locationLabel, new Vector2(bounds.X + padding + (int)(maxLabelWidth - font.MeasureString(locationLabel).X), bounds.Y + topOffset), bounds.Width);
                 batch.DrawTextBlock(font, locationName, new Vector2(bounds.X + padding + maxLabelWidth + gutter, bounds.Y + topOffset), bounds.Width);
+                topOffset += labelSize.Y;
+            }
+
+            // Sell value
+            {
+                int totalSellPrice = this.Chest.Container.Inventory
+                    .Where(item => item != null)
+                    .Sum(item => Utility.getSellToStorePriceOfItem(item));
+                Vector2 labelSize = batch.DrawTextBlock(font, valueLabel, new Vector2(bounds.X + padding + (int)(maxLabelWidth - font.MeasureString(locationLabel).X), bounds.Y + topOffset), bounds.Width);
+                batch.DrawTextBlock(font, totalSellPrice.ToString(), new Vector2(bounds.X + padding + maxLabelWidth + gutter, bounds.Y + topOffset), bounds.Width);
                 topOffset += labelSize.Y;
             }
 
